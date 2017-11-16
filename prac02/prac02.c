@@ -1,3 +1,8 @@
+/**
+  * @File   prac02.c
+  * @Author won.seok.django@gmail.com
+  * @Brief  LED blink using timer
+  */
 #define GPFSEL_BASE 0x3f200000
 #define GPSET_BASE 0x3f20001c
 #define GPCLR_BASE 0x3f200028
