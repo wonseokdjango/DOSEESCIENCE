@@ -1,56 +1,85 @@
 
 .globl _start
-_start: 
-  ldr pc,reset_handler
-  ldr pc,undefined_handler
-  ldr pc,swi_handler
-  ldr pc,prefetch_handler
-  ldr pc,data_handler
-  ldr pc,unused_handler
-  ldr pc,irq_handler
-  ldr pc,fiq_handler
+_start:
+  b skip
+  b hang
+  b hang
+  b hang
+  b hang
+  b hang
+  b hang
+  b hang
+  b hang
+  b hang
+  b hang
+  b hang
+  b hang
+  b hang
+  b hang
+  b hang
 
-reset_handler     : .word reset
-undefined_handler : .word hang
-swi_handler       : .word hang
-prefetch_handler  : .word hang
-data_handler      : .word hang
-unused_handler    : .word hang
-irq_handler       : .word irq
-fiq_handler       : .word hang
+.balign 0x80
+  b hang
+    
+.balign 0x80
+  b hang
 
-reset:
-  mov r0,#0x8000
-  mov r1,#0x0000
-  
-  ldmia r0!,{r2,r3,r4,r5,r6,r7,r8,r9}
-  stmia r1!,{r2,r3,r4,r5,r6,r7,r8,r9}
-  ldmia r0!,{r2,r3,r4,r5,r6,r7,r8,r9}
-  stmia r1!,{r2,r3,r4,r5,r6,r7,r8,r9}
+.balign 0x80    
+  b hang
+    
+.balign 0x80
+  b hang
 
-  mov r0,#0xD2
-  msr cpsr_c,r0
-  mov sp,#(63 * 1024 * 1024)
+.balign 0x80
+  b irq_handler
 
-  mov r0,#0xD3
-  msr cpsr_c,r0
+skip:
+  mov x1,#0x80000000
+	msr	hcr_el2,x1
+  ldr x0,=0x00C00800
+	msr	sctlr_el1,x0
+	mov	x0,#0x3c5  
+	msr	spsr_el2,x0
+	adr	x0,enter_el1
+	msr	elr_el2, x0
+	eret
 
-  mov sp,#(64 * 1024 * 1024)
-  bl my_main
+enter_el1:
+  ldr x0,=_start
+  msr vbar_el1,x0
+  mov sp,#0x08000000
+  bl main
 
 hang:
   b hang
 
 .globl enable_irq
 enable_irq:
-  mrs r0, cpsr
-  bic r0, r0, #0x80
-  msr cpsr_c, r0
-  bx lr
+  ldr x0,=_start
+  msr vbar_el1,x0
+  msr daifclr,#2
+  ret
 
-irq:
-  push {r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,lr}
-  bl   c_irq_handler
-  pop  {r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,r10,r11,r12,lr}
-  subs pc,lr,#4
-
+irq_handler:
+  stp x0,x1,[sp,#-16]!
+  stp x2,x3,[sp,#-16]!
+  stp x4,x5,[sp,#-16]!
+  stp x6,x7,[sp,#-16]!
+  stp x8,x9,[sp,#-16]!
+  stp x10,x11,[sp,#-16]!
+  stp x12,x13,[sp,#-16]!
+  stp x14,x15,[sp,#-16]!
+  stp x16,x17,[sp,#-16]!
+  stp x18,x19,[sp,#-16]!
+  bl c_irq_handler
+  ldp x18,x19,[sp],#16
+  ldp x16,x17,[sp],#16
+  ldp x14,x15,[sp],#16
+  ldp x12,x13,[sp],#16
+  ldp x10,x11,[sp],#16
+  ldp x8,x9,[sp],#16
+  ldp x6,x7,[sp],#16
+  ldp x4,x5,[sp],#16
+  ldp x2,x3,[sp],#16
+  ldp x0,x1,[sp],#16
+  eret
