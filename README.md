@@ -8,7 +8,7 @@ This repository has practices for DOSEE SCIENCE
 
 강의자료는 lecture 디렉토리에 존재하며, 각 실습에 해당되는 lecture는 아래와 같습니다.
 
-1. 실습1 (prac01) : Lecture2, 3
+1. 실습1 (prac01_win, prac01_linux) : Lecture2, 3
 2. 실습2 (prac02) : Lecture4
 3. 실습3 (prac03) : Lecture5
 

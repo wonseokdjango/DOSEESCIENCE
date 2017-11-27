@@ -1,0 +1,1 @@
+del /Q *.o *.list *.elf *.hex *.img
