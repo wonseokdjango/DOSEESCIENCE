@@ -1,8 +1,8 @@
-KERNELDIR=/lib/module/$(shell uname -r)/build
+KERNELDIR=/root/linux
 
 obj-m:=led_dev.o
 
-KDIR:=/lib/module/$(shell uname -r)/build
+KDIR:=/root/linux
 PWD:=$(shell pwd)
 
 default:
@@ -14,3 +14,5 @@ clean:
 	rm -rf .*.cmd
 	rm -rf *.o
 	rm -rf .tmp_versions
+	rm -rf *.order
+	rm -rf *.symvers

@@ -9,6 +9,9 @@
 #include <linux/fs.h>
 #include <asm/io.h>
 
+MODULE_AUTHOR("Wonseok Lee");
+MODULE_LICENSE("GPL");
+
 #define GPFSEL_BASE 0x3f200000
 #define GPSET_BASE 0x3f20001c
 #define GPCLR_BASE 0x3f200028
@@ -62,6 +65,10 @@ static inline void write_GPIO(unsigned int _pin, unsigned int _value)
 #define DEV_NUM 60
 #define DEV_NAME "led_dev"
 
+int led_open(struct inode* _inode, struct file* _filp);
+int led_close(struct inode *inode, struct file *filp);
+long led_ioctl(struct file *flip, unsigned int cmd, unsigned long arg);
+
 /**
   *@Brief file operation table
   */
@@ -78,9 +85,9 @@ struct file_operations led_fops = {
 int led_init(void)
 {
   int ret = register_chrdev(DEV_NUM, DEV_NAME, &led_fops);
-  if(re < 0)
+  if(ret < 0)
   {
-    printk("WONSEOK > cannot obtain major number %d\n", MAJOR_NUMBER);
+    printk("WONSEOK > cannot obtain major number %d\n", DEV_NUM);
     return ret;
   }
 
@@ -89,6 +96,8 @@ int led_init(void)
   GPSET = (volatile unsigned int*)ioremap(GPSET_BASE, 4);
   GPCLR = (volatile unsigned int*)ioremap(GPCLR_BASE, 4);
   
+  printk("WONSEOK > Hello DOSEESCIENCE\n");
+
   return 0;
 }
 
@@ -98,6 +107,7 @@ int led_init(void)
 void led_exit(void)
 {
   unregister_chrdev(DEV_NUM, DEV_NAME);
+ 	printk("WONSEOK > Bye DOSEESCIENCE\n");
 }
 
 /**
@@ -131,7 +141,7 @@ int led_close(struct inode *inode, struct file *filp)
   *@Param[in]   _arg  argument, we do not use it
   *@Param[out]  always 0
   */
-long gpio_custom_ioctl(struct file *flip, unsigned int cmd, unsigned long arg)
+long led_ioctl(struct file *flip, unsigned int cmd, unsigned long arg)
 {
   if (cmd)
     write_GPIO(5, 1);
@@ -141,7 +151,6 @@ long gpio_custom_ioctl(struct file *flip, unsigned int cmd, unsigned long arg)
   return 0;
 }
 
-module_init(gpio_custom_init);
-module_exit(gpio_custom_exit);
+module_init(led_init);
+module_exit(led_exit);
 
-MODULE_AUTHOR("Wonseok Lee");

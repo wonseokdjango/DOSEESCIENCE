@@ -30,6 +30,8 @@ int main(void)
 
     ioctl(fd, 0, 0);
     sleep(1);
+
+    ++blink;
   }
 
   close(fd);
