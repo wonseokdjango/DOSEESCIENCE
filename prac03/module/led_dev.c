@@ -54,9 +54,9 @@ static inline unsigned int read_GPIO(unsigned int _pin)
 static inline void write_GPIO(unsigned int _pin, unsigned int _value)
 {
   if (_value == 0)
-    GPCLR[_pin / 32] |= (1 << (_pin % 32));
+    GPCLR[_pin / 32] = (1 << (_pin % 32));
   else
-    GPSET[_pin / 32] |= (1 << (_pin % 32));
+    GPSET[_pin / 32] = (1 << (_pin % 32));
 }
 
 #define DEV_NUM 60

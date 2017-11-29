@@ -77,9 +77,9 @@ inline unsigned int read_GPIO(unsigned int _pin)
 inline void write_GPIO(unsigned int _pin, unsigned int _value)
 {
   if (_value == 0)
-    GPCLR[_pin / 32] |= (1 << (_pin % 32));
+    GPCLR[_pin / 32] = (1 << (_pin % 32));
   else
-    GPSET[_pin / 32] |= (1 << (_pin % 32));
+    GPSET[_pin / 32] = (1 << (_pin % 32));
 }
 
 /**
@@ -88,10 +88,17 @@ inline void write_GPIO(unsigned int _pin, unsigned int _value)
 void c_irq_handler ( void )
 {
   ++cnt;
-  if(cnt % 2)
+  if (cnt % 2)
     write_GPIO(5, 1);
   else
     write_GPIO(5, 0);
+
+  /*
+  if (cnt % 3)
+    write_GPIO(6, 1);
+  else
+    write_GPIO(6, 0);
+    */
   
   ARM_TIMER_CLI[0] = 0;
 }
@@ -107,6 +114,7 @@ int main (void)
   ARM_TIMER_CTL[0] = 0x003E00A2;
 
   set_GPIO_mode(5, 1);
+  //set_GPIO_mode(6, 1);
 
   IRQ_ENABLE_BASIC[0] = 1;
   

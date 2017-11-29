@@ -26,6 +26,6 @@ kernel7.img : memmap start.o prac02.o
 	$(ARMGNU)-ld start.o prac02.o -T memmap -o prac02.elf
 	$(ARMGNU)-objdump -D prac02.elf > prac02.list
 	$(ARMGNU)-objcopy --srec-forceS3 prac02.elf -O srec prac02.srec
-	$(ARMGNU)-objcopy prac02.elf -O binary kernel8.img
+	$(ARMGNU)-objcopy prac02.elf -O binary kernel7.img
 
 
